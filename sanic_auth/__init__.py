@@ -9,13 +9,13 @@ __version__ = '0.3.0.dev0'
 
 __all__ = ['Auth', 'User']
 
-
 #: A User proxy type, used by default implementation of :meth:`Auth.load_user`
-User = namedtuple('User', 'id name'.split())
+User = namedtuple('User', 'id name admin'.split())
 
 
 class Auth:
     """Authentication Manager."""
+
     def __init__(self, app=None):
         self.app = None
         if app is not None:
@@ -115,7 +115,7 @@ class Auth:
 
     def serialize(self, user):
         """Serialize the user, returns a token to be placed into session"""
-        return {'uid': user.id, 'name': user.name}
+        return {'uid': user.id, 'name': user.name, 'admin': user.admin}
 
     def serializer(self, user_serializer):
         """Decorator to set a custom user serializer"""
@@ -131,7 +131,7 @@ class Auth:
         Override this with routine that loads user from database if needed.
         """
         if token is not None:
-            return User(id=token['uid'], name=token['name'])
+            return User(id=token['uid'], name=token['name'], admin=token['admin'])
 
     def user_loader(self, load_user):
         """Decorator to set a custom user loader that loads user with token"""
